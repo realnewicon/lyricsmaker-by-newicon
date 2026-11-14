@@ -2,4 +2,4 @@
 
 tg @notnewicon
 
-open lyric-studio-standalone and enjoy
+open https://realnewicon.github.io/lyricsmaker-by-newicon/ and enjoy
