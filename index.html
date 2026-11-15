@@ -49,7 +49,7 @@ canvas{width:100%;max-height:60vh;object-fit:contain;background:#000;border-radi
 <div class="r"><button id="ki">Применить ключи из поля</button><button id="ke">Выгрузить ключи</button></div></details>
 
 <details open><summary>3 · Шаблон и эффекты</summary>
-<div class="r"><label>Шаблон<select id="tpl"><option value="glow">Светящееся слово</option><option value="pills">Крупное слово + плашка</option><option value="bird">Птичка (Flappy)</option><option value="player">Плеер: живой текст</option><option value="persp">Перспектива: стопка слов</option><option value="anim">Анимация (сцены по строкам)</option></select></label>
+<div class="r"><label>Шаблон<select id="tpl"><option value="glow">Светящееся слово</option><option value="pills">Крупное слово + мелкая подпись</option><option value="bird">Птичка (Flappy)</option><option value="player">Плеер: живой текст</option><option value="persp">Перспектива: стопка слов</option><option value="anim">Анимация (сцены по строкам)</option></select></label>
 <label>Формат<select id="asp"><option value="1080x1920">9:16 вертикаль</option><option value="1080x1080">1:1 квадрат</option><option value="1920x1080">16:9</option><option value="720x1280">9:16 лёгкий</option></select></label></div>
 <div class="r"><label>Шрифт<select id="fnt"><optgroup label="Мои шрифты"><option>Arteks</option><option>Unutterable</option><option>Soledago</option><option>Typesauce</option><option>Chicoree</option></optgroup><optgroup label="Классика"><option>Oswald</option><option>Anton</option><option>Bebas Neue</option><option>Montserrat</option><option>Unbounded</option><option>Playfair Display</option><option>Impact</option><option>Arial</option></optgroup><optgroup label="Крутые от меня"><option>Russo One</option><option>Rubik Mono One</option><option>Rubik Glitch</option><option>Stalinist One</option><option>Press Start 2P</option><option>Pacifico</option><option>Lobster</option><option>Yeseva One</option><option>Marck Script</option><option>Caveat</option><option>Comfortaa</option><option>Bad Script</option></optgroup></select></label>
 <label>Свой шрифт (ttf / otf / woff)<input id="ff" type="file" accept=".ttf,.otf,.woff,.woff2"></label></div>
@@ -82,7 +82,7 @@ canvas{width:100%;max-height:60vh;object-fit:contain;background:#000;border-radi
 
 <details open><summary>5 · Запись видео</summary>
 <div class="r"><label>Начать с секунды<input id="from" type="number" value="0" min="0" step="0.1"></label><button id="rec" class="p">⏺ Записать и сохранить</button></div>
-<p class="h" id="rs2">Запись идёт в реальном времени, пока играет трек. Чёрный фон можно убрать наложением «Экран» (Screen) в редакторе.</p></details>
+<p class="h" id="rs2">Запись идёт в реальном времени, пока играет трек. Чёрный фон можно убрать наложением «Экран» (Screen) в редакторе.</p><div id="res"></div></details>
 </main>
 <script>
 const $=i=>document.getElementById(i),cv=$("cv"),cx=cv.getContext("2d"),A=new Audio();A.preload="auto";A.preservesPitch=A.webkitPreservesPitch=A.mozPreservesPitch=true;
@@ -108,7 +108,7 @@ glow(t,k,W,H){if(k<0)return;const txt=cw(k).map(w=>w.text.toUpperCase()).join(" 
  const px=fit(txt,W*.9,170*S.z*W/1080);cx.save();cx.translate(W/2,H/2+dy);cx.scale(sc,sc);glowText(txt,0,0,px,clamp(a/.07),S.st);cx.restore()},
 pills(t,k,W,H){if(k<0)return;const ws=cw(k),big=ws[ws.length-1],small=ws.slice(0,-1).map(w=>w.text).join(" "),a=t-big.t+LAGS,p=eo(a/.18);
  const px=fit(big.text.toUpperCase(),W*.9,230*S.z*W/1080),cy=H/2;cx.save();cx.translate(W/2,cy);cx.scale(1+.4*(1-p),(1+.4*(1-p))*S.st);cx.font=F(px,"800");cx.textAlign="center";cx.textBaseline="middle";cx.globalAlpha=clamp(a*8);cx.fillStyle=S.x;cx.fillText(big.text.toUpperCase(),0,0);cx.restore();
- if(small){const sp=px*.3;cx.font=F(sp);const w=cx.measureText(small).width+sp*1.2,h=sp*1.7,y=cy-px*.5*S.st-h;cx.fillStyle=S.c;cx.beginPath();cx.roundRect(W/2-w/2,y-h/2,w,h,h/2);cx.fill();cx.fillStyle="#fff";cx.textAlign="center";cx.textBaseline="middle";cx.fillText(small,W/2,y+sp*.05)}},
+ if(small){const sp=px*.3,y=cy-px*.5*S.st-sp*1.1;cx.font=F(sp);cx.fillStyle=S.x;cx.globalAlpha=.8*clamp(a*8);cx.textAlign="center";cx.textBaseline="middle";cx.fillText(small,W/2,y);cx.globalAlpha=1}},
 bird(t,k,W,H){const BX=W*.3,V=W*.48,PW=W*.15,GAP=H*.28,pi=j=>.9+1.45*j,gc=j=>H*(.38+.3*(.5+.5*Math.sin(j*2.7+1.3)*Math.cos(j*1.1)));
  for(let j=0;j<60;j++){const x=BX+V*(pi(j)-t)-PW/2;if(x<-PW*2||x>W+PW)continue;const g=gc(j),cap=PW*.5;
   const gr=cx.createLinearGradient(x,0,x+PW,0);gr.addColorStop(0,"#3a9a1e");gr.addColorStop(.2,"#c4f58a");gr.addColorStop(.5,"#78d63c");gr.addColorStop(1,"#2f7f1a");cx.fillStyle=gr;cx.strokeStyle="#16461a";cx.lineWidth=5;
@@ -174,12 +174,20 @@ $("ra").onclick=async()=>{const f=$("rf").files[0];if(!f)return alert("Выбе�
   for(let i=1;i<=6;i++){v.currentTime=v.duration*i/7;await new Promise(r=>v.onseeked=r);c.getContext("2d").drawImage(v,0,0,c.width,c.height);bl.push(await new Promise(r=>c.toBlob(r,"image/jpeg",.8)))}
   const s=await window.claude.use("sample");const r=await s.json(`Это кадры референса лирик-видео (слова появляются по одному). Подбери настройки моего генератора. Верни только JSON: {"template":"glow|pills|bird|player","font":"Arteks|Unutterable|Soledago|Typesauce|Chicoree|Oswald|Anton|Bebas Neue|Montserrat|Unbounded|Playfair Display|Russo One|Rubik Mono One|Rubik Glitch|Stalinist One|Press Start 2P|Pacifico|Lobster|Yeseva One|Marck Script|Caveat|Comfortaa|Bad Script|Impact|Arial","color":"#rrggbb акцент/свечение","text":"#rrggbb цвет текста","bg":"#rrggbb","glow":0..1,"size":0.6..1.4,"stretch":1..1.8,"fisheye":0..1,"wide":0..1,"wave":0..1,"zoom":0..1,"shake":0..1,"glitch":0..1,"vignette":0..1,"note":"коротко по-русски, что в референсе и чего шаблонам не хватает"}`,{images:bl});
   applyPreset(r);$("rn").textContent=r.note||"Готово: настройки применены."}catch(e){$("rn").textContent="Не вышло: "+(e.message||e)}};
-async function saveBlob(b,ext){const name="lyrics."+ext;try{const d=await window.claude.use("downloads");if(d){await d.save({filename:name,data:b});return}}catch(_){}const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;a.click()}
+async function saveBlob(b,ext){const name="lyrics."+ext,type=b.type||(ext==="mp4"?"video/mp4":ext==="json"?"application/json":"video/webm"),f=new File([b],name,{type}),url=URL.createObjectURL(f),dl=()=>{const a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove()};
+ if(window.claude){try{const d=await window.claude.use("downloads");if(d){await d.save({filename:name,data:b});if(ext==="json")return}}catch(_){}}
+ if(ext==="json"){dl();return}
+ const box=$("res");box.innerHTML="";const v=document.createElement("video");v.src=url;v.controls=true;v.playsInline=true;v.style.cssText="width:100%;max-height:50vh;border-radius:10px;background:#000;margin-top:10px";box.appendChild(v);
+ const row=document.createElement("div");row.className="r";const mk=(t,fn,cl)=>{const bt=document.createElement("button");bt.textContent=t;if(cl)bt.className=cl;bt.onclick=fn;row.appendChild(bt)};
+ if(navigator.canShare&&navigator.canShare({files:[f]}))mk("Сохранить в галерею / поделиться",async()=>{try{await navigator.share({files:[f],title:"Лирик-видео"})}catch(_){}},"p");
+ mk("Скачать файл",dl);box.appendChild(row);
+ const p=document.createElement("p");p.className="h";p.textContent=ext==="webm"?"Этот браузер записал файл webm: на iPhone и в галерее он может не открыться. Откройте студию в Safari (iPhone) или свежем Chrome (Android), либо запишите на компьютере.":"Нажмите «Сохранить в галерею» и выберите «Сохранить видео». Предпросмотр выше показывает, что файл воспроизводится.";box.appendChild(p);
+ v.onerror=()=>{p.textContent="Браузер не смог воспроизвести этот файл. Попробуйте Safari на iPhone, Chrome на Android или запись на компьютере."};box.scrollIntoView({behavior:"smooth"})}
 $("rec").onclick=async()=>{if(!A.src)return alert("Загрузите трек");if(!KEYS.length)return alert("Нужны ключи");if(window.VideoEncoder&&window.AudioEncoder&&window.Mp4Muxer&&AB){try{return await exportHQ()}catch(e){$("rs2").textContent="Точный экспорт не вышел ("+(e.message||e)+"), пишу в реальном времени…"}}
  await ensureAudio();
  const st=$("gl").captureStream(30);DST.stream.getAudioTracks().forEach(t=>st.addTrack(t));
- const mt=["video/mp4;codecs=avc1","video/webm;codecs=vp9,opus","video/webm"].find(m=>MediaRecorder.isTypeSupported(m));const ch=[],mr=new MediaRecorder(st,{mimeType:mt,videoBitsPerSecond:12e6});
- mr.ondataavailable=e=>ch.push(e.data);mr.onstop=async()=>{$("rs2").textContent="Сохраняю…";await saveBlob(new Blob(ch,{type:mt.split(";")[0]}),mt.startsWith("video/mp4")?"mp4":"webm");$("rs2").textContent="Готово."};
+ const mt=["video/mp4;codecs=avc1.42E01E,mp4a.40.2","video/mp4;codecs=avc1","video/mp4","video/webm;codecs=vp9,opus","video/webm"].find(m=>MediaRecorder.isTypeSupported(m)),ch=[],mr=new MediaRecorder(st,mt?{mimeType:mt,videoBitsPerSecond:8e6}:{videoBitsPerSecond:8e6});
+ mr.ondataavailable=e=>ch.push(e.data);mr.onstop=async()=>{$("rs2").textContent="Готово. Файл ниже.";const ty=(mr.mimeType||mt||"video/mp4").split(";")[0];await saveBlob(new Blob(ch,{type:ty}),ty.includes("mp4")?"mp4":"webm")};
  A.currentTime=+$("from").value||0;A.playbackRate=1;mr.start();await A.play();const end=KEYS[KEYS.length-1].t+2.2;$("rs2").textContent="Идёт запись…";
  const iv=setInterval(()=>{if(A.currentTime>=end||A.ended){clearInterval(iv);A.pause();mr.stop()}},100)};
 const GL=$("gl"),g=GL.getContext("webgl",{preserveDrawingBuffer:true,alpha:false});let PR,TX,fxp=0,AN,FD;
@@ -254,5 +262,6 @@ $("po").onchange=async e=>{const f=e.target.files[0];if(f)try{loadProj(JSON.pars
 setInterval(()=>{try{localStorage.setItem("ls1",JSON.stringify(proj()))}catch(_){}},4000);
 try{const sv=localStorage.getItem("ls1");if(sv)loadProj(JSON.parse(sv))}catch(_){}
 if(!window.claude){const n=document.createElement("p");n.className="h";n.textContent="Автономный режим: всё работает прямо в браузере. Подбор по референсу и идеи сцен подключаются только внутри Claude (в разделах есть запасной вариант).";document.querySelector("h1").after(n)}
+try{if(!localStorage.getItem("ls1")&&/Mobi|Android|iPhone/i.test(navigator.userAgent)){$("asp").value="720x1280";$("asp").onchange({target:$("asp")})}}catch(_){}
 parse();loadFont();requestAnimationFrame(draw);
 </script></body></html>
